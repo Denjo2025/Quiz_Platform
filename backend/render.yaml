@@ -1,0 +1,18 @@
+services:
+  - name: quiz-backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: "32"
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: UPLOAD_DIR
+        value: /opt/render/uploads
+      - key: MAX_IMAGE_SIZE_MB
+        value: 5
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 10080
+      - key: DATABASE_URL
+        sync: false
+    plan: free

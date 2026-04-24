@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-blue: #2563eb;
+  --secondary-blue: #1d4ed8;
+  --accent-yellow: #fbbf24;
+  --accent-rose: #f43f5e;
+  --bg-deep: #0a0b1e;
+}
+
+@layer base {
+  body {
+    @apply bg-[#0a0b1e] text-slate-200 font-sans selection:bg-blue-500/30 selection:text-white antialiased overflow-x-hidden;
+  }
+}
+
+@layer components {
+  .bg-vibrant-space {
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+  }
+
+  .btn-primary {
+    @apply px-8 py-4 rounded-[1.5rem] bg-white text-blue-600 font-black font-sans uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+  }
+
+  .btn-yellow {
+    @apply px-10 py-5 rounded-[2rem] bg-[#fbbf24] text-blue-900 font-black font-sans uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-blue-900/30 border-b-8 border-yellow-600 flex items-center justify-center gap-2;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-4 rounded-[1.5rem] bg-white/10 text-white font-black font-sans uppercase tracking-widest hover:bg-white/20 transition-all border border-white/10 flex items-center justify-center gap-2;
+  }
+
+  .input-field {
+    @apply w-full px-8 py-5 rounded-[1.5rem] bg-white text-blue-900 font-bold placeholder-blue-300 border-4 border-transparent focus:border-blue-600/20 focus:outline-none transition-all shadow-inner;
+  }
+
+  .card {
+    @apply bg-white/5 border border-white/10 rounded-[3rem] shadow-2xl backdrop-blur-xl;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scroll {
+  width: 10px;
+}
+::-webkit-scroll-track {
+  @apply bg-blue-900/20;
+}
+::-webkit-scroll-thumb {
+  @apply bg-white/20 rounded-full hover:bg-white/30 transition-colors;
+}
+
+/* Pulse Dots Animation */
+@keyframes pulse-dots {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+.animate-pulse-dots {
+  animation: pulse-dots 2s ease-in-out infinite;
+}
+
+/* Simple Waving Character Animation */
+@keyframes wave-body {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+@keyframes wave-arm-left {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(-30deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes wave-arm-right {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(20deg); }
+  100% { transform: rotate(0deg); }
+}
+.animate-wave-body {
+  animation: wave-body 2s ease-in-out infinite;
+}
+.animate-wave-arm-left {
+  animation: wave-arm-left 1s ease-in-out infinite;
+  transform-origin: 30px 32px;
+}
+.animate-wave-arm-right {
+  animation: wave-arm-right 1s ease-in-out infinite 0.5s;
+  transform-origin: 30px 32px;
+}
