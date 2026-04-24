@@ -2,10 +2,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from app.config import settings
 
-# Support both SQLite and PostgreSQL
 connect_args = {}
 if settings.DATABASE_URL.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
+elif "postgresql" in settings.DATABASE_URL:
+    connect_args = {"sslmode": "require"}
 
 engine = create_engine(settings.DATABASE_URL, connect_args=connect_args)
 

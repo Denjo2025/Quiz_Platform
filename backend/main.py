@@ -70,6 +70,7 @@ async def lifespan(app: FastAPI):
     # Create tables on startup
     try:
         from app.database import Base, engine
+        from app.models import User, Quiz, Question, Room
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables created successfully")
     except Exception as e:
