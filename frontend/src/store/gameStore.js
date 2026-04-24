@@ -89,6 +89,7 @@ export const useGameStore = create((set, get) => ({
         text: payload.text,
         image_url: payload.image_url,
         answers: payload.answers,
+        is_text_answer: payload.is_text_answer || false,
       },
       questionIndex: payload.question_index,
       totalQuestions: payload.total_questions,

@@ -13,6 +13,7 @@ export default function GamePage() {
   const [timerResetKey, setTimerResetKey] = useState(0)
   const [reconnecting, setReconnecting] = useState(false)
   const [roomCodeLoaded, setRoomCodeLoaded] = useState(null)
+  const [textInput, setTextInput] = useState('')
 
   const {
     nickname, gameStatus, currentQuestion, questionIndex, totalQuestions,
@@ -61,6 +62,7 @@ export default function GamePage() {
     switch (type) {
       case 'question_start':
         setTimerResetKey(k => k + 1)
+        setTextInput('')
         startQuestion(payload)
         useGameStore.getState().saveSession()
         setReconnecting(false)
@@ -85,10 +87,19 @@ export default function GamePage() {
     }
   }, [lastMessage])
 
+  const isTextAnswer = currentQuestion?.is_text_answer
+
   const handleAnswer = (index) => {
     if (hasAnswered) return
     submitAnswer()
     sendMessage({ type: 'player_answer', payload: { answer_index: index } })
+    useGameStore.getState().saveSession()
+  }
+
+  const handleTextAnswer = () => {
+    if (hasAnswered || !textInput.trim()) return
+    submitAnswer()
+    sendMessage({ type: 'player_answer', payload: { answer_index: 0, answer_text: textInput } })
     useGameStore.getState().saveSession()
   }
 
@@ -142,30 +153,67 @@ export default function GamePage() {
             </div>
           </div>
 
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
-            {hasAnswered ? (
-              <div className="col-span-full flex flex-col items-center justify-center py-16 bg-white/10 rounded-[2.5rem] border-2 border-white/20 backdrop-blur-md">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-2xl animate-float">
-                  <svg className="w-10 h-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
-                  </svg>
+          {isTextAnswer ? (
+            <div className="w-full max-w-2xl">
+              {hasAnswered ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-16 bg-white/10 rounded-[2.5rem] border-2 border-white/20 backdrop-blur-md">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-2xl animate-float">
+                    <svg className="w-10 h-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-white text-3xl font-black font-outfit tracking-tight">Answer Locked!</h3>
+                  <p className="text-white/60 font-medium mt-2 text-base">Waiting for headquarters...</p>
                 </div>
-                <h3 className="text-white text-3xl font-black font-outfit tracking-tight">Answer Locked!</h3>
-                <p className="text-white/60 font-medium mt-2 text-base">Waiting for headquarters...</p>
-              </div>
-            ) : (
-              currentQuestion.answers?.map((ans, i) => (
-                <AnswerButton
-                  key={i}
-                  index={i}
-                  text={ans.text}
-                  image_url={ans.image_url || null}
-                  disabled={hasAnswered}
-                  onClick={() => handleAnswer(i)}
-                />
-              ))
-            )}
-          </div>
+              ) : (
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl">
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="text"
+                      className="flex-1 px-6 py-5 rounded-[2rem] bg-blue-50 text-blue-900 font-black font-outfit text-xl outline-none focus:ring-4 focus:ring-blue-400/30 shadow-inner"
+                      placeholder="Type your answer..."
+                      value={textInput}
+                      onChange={(e) => setTextInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleTextAnswer()}
+                      autoFocus
+                    />
+                    <button
+                      onClick={handleTextAnswer}
+                      disabled={!textInput.trim()}
+                      className="px-8 py-5 bg-blue-600 text-white font-black font-outfit uppercase tracking-widest rounded-[2rem] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all"
+                    >
+                      SUBMIT
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
+              {hasAnswered ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-16 bg-white/10 rounded-[2.5rem] border-2 border-white/20 backdrop-blur-md">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-2xl animate-float">
+                    <svg className="w-10 h-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-white text-3xl font-black font-outfit tracking-tight">Answer Locked!</h3>
+                  <p className="text-white/60 font-medium mt-2 text-base">Waiting for headquarters...</p>
+                </div>
+              ) : (
+                currentQuestion.answers?.map((ans, i) => (
+                  <AnswerButton
+                    key={i}
+                    index={i}
+                    text={ans.text}
+                    image_url={ans.image_url || null}
+                    disabled={hasAnswered}
+                    onClick={() => handleAnswer(i)}
+                  />
+                ))
+              )}
+            </div>
+          )}
         </div>
       )}
 

@@ -132,10 +132,10 @@ export default function QuizEditorPage() {
       <div className="w-full max-w-4xl mx-auto flex-1 space-y-10 relative z-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white p-6 rounded-[2.5rem] shadow-2xl border-b-8 border-blue-600/10">
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col sm:flex-row items-center gap-5 w-full md:w-auto text-center sm:text-left">
             <button
               onClick={() => navigate('/host/dashboard')}
-              className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-inner"
+              className="w-12 h-12 flex-shrink-0 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-inner"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -149,7 +149,7 @@ export default function QuizEditorPage() {
           <button
             onClick={handleSaveAndExit}
             disabled={saving}
-            className="btn-yellow px-8 py-4 flex items-center gap-2"
+            className="btn-yellow px-8 py-4 flex items-center justify-center gap-2 w-full md:w-auto"
           >
             {saving ? (
               <div className="w-5 h-5 border-4 border-blue-900/20 border-t-blue-900 rounded-full animate-spin" />
@@ -226,14 +226,20 @@ export default function QuizEditorPage() {
                     onCancel={() => setEditingQuestion(null)}
                   />
                 ) : (
-                  <div className="bg-white rounded-[2.5rem] p-6 flex items-center gap-6 group hover:shadow-2xl transition-all relative overflow-hidden">
+                  <div className="bg-white rounded-[2.5rem] p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 group hover:shadow-2xl transition-all relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/5 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700" />
 
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 border-4 border-white shadow-inner flex items-center justify-center font-black text-blue-900/20 text-2xl font-outfit flex-shrink-0 group-hover:text-blue-600 group-hover:scale-110 transition-all">
-                      {i + 1}
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                      <div className="w-14 h-14 rounded-2xl bg-blue-50 border-4 border-white shadow-inner flex items-center justify-center font-black text-blue-900/20 text-2xl font-outfit flex-shrink-0 group-hover:text-blue-600 group-hover:scale-110 transition-all">
+                        {i + 1}
+                      </div>
+
+                      <div className="flex-1 min-w-0 relative z-10 sm:hidden">
+                        <p className="text-blue-900 font-black font-outfit text-xl tracking-tighter italic line-clamp-1 group-hover:text-blue-600 transition-colors">{q.text}</p>
+                      </div>
                     </div>
 
-                    <div className="flex-1 min-w-0 relative z-10">
+                    <div className="flex-1 min-w-0 relative z-10 hidden sm:block">
                       <p className="text-blue-900 font-black font-outfit text-xl tracking-tighter italic line-clamp-1 group-hover:text-blue-600 transition-colors">{q.text}</p>
                       <div className="flex items-center gap-4 mt-1.5">
                         <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-blue-50 rounded-lg text-[9px] font-black text-blue-600 uppercase tracking-widest shadow-sm">
@@ -251,7 +257,23 @@ export default function QuizEditorPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 relative z-10">
+                    {/* Show tags on mobile below text */}
+                    <div className="flex items-center gap-4 mt-1 sm:hidden w-full px-1 relative z-10">
+                        <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-blue-50 rounded-lg text-[9px] font-black text-blue-600 uppercase tracking-widest shadow-sm">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {q.time_limit_seconds}s
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-50 rounded-lg text-[9px] font-black text-emerald-600 uppercase tracking-widest shadow-sm">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                          </svg>
+                          {q.points} Pts
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0 justify-between sm:justify-end relative z-10 border-t border-blue-50 sm:border-t-0 pt-4 sm:pt-0">
                       <div className="flex flex-col gap-1">
                         <button
                           onClick={() => handleMoveQuestion(i, -1)}

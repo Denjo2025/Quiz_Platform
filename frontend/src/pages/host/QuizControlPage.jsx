@@ -60,6 +60,7 @@ export default function QuizControlPage() {
           image_url: payload.image_url,
           answers: payload.answers,
           time_limit: payload.time_limit,
+          is_text_answer: payload.is_text_answer || false,
         })
         setQuestionIndex(payload.question_index)
         setTotalQuestions(payload.total_questions)

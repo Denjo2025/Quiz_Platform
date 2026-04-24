@@ -68,7 +68,7 @@ export default function HomePage() {
               <span className="text-blue-100 text-[10px] font-black uppercase tracking-widest">Mission Protocol Active</span>
             </div>
 
-            <h1 className="text-7xl lg:text-[140px] font-black text-white italic uppercase tracking-tighter leading-[0.85] drop-shadow-2xl">
+            <h1 className="text-6xl sm:text-7xl lg:text-[140px] font-black text-white italic uppercase tracking-tighter leading-[0.85] drop-shadow-2xl">
               VIBRANT<br />
               <span className="text-yellow-400">ARENA</span>
             </h1>

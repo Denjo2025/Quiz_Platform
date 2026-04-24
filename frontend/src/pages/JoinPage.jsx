@@ -55,7 +55,7 @@ export default function JoinPage() {
       </div>
 
       <div className="w-full max-w-md relative z-10 animate-fade-in">
-        <div className="bg-white rounded-[3rem] p-10 shadow-2xl space-y-8 relative overflow-hidden border-b-8 border-blue-600/10">
+        <div className="bg-white rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-10 shadow-2xl space-y-8 relative overflow-hidden border-b-8 border-blue-600/10">
           <div className="absolute top-0 left-0 w-full h-2 bg-blue-600/10" />
 
           <div className="text-center space-y-4">
@@ -72,7 +72,7 @@ export default function JoinPage() {
                 <input
                   type="text"
                   maxLength={6}
-                  className="w-full bg-blue-50 border-4 border-transparent focus:border-blue-600/20 focus:bg-white px-6 py-4 rounded-[1.5rem] text-blue-900 font-black font-outfit text-4xl text-center placeholder:text-blue-900/10 outline-none transition-all shadow-inner tracking-[0.3em] uppercase italic"
+                  className="w-full bg-blue-50 border-4 border-transparent focus:border-blue-600/20 focus:bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-[1.5rem] text-blue-900 font-black font-outfit text-3xl sm:text-4xl text-center placeholder:text-blue-900/10 outline-none transition-all shadow-inner tracking-[0.2em] sm:tracking-[0.3em] uppercase italic"
                   placeholder="000000"
                   value={pin}
                   onChange={(e) => setPin(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
@@ -82,7 +82,7 @@ export default function JoinPage() {
                 <label className="text-blue-900/40 text-[9px] font-black uppercase tracking-[0.3em] ml-4">Agent Codename</label>
                 <input
                   type="text"
-                  className="w-full bg-blue-50 border-4 border-transparent focus:border-blue-600/20 focus:bg-white px-6 py-4 rounded-[1.5rem] text-blue-900 font-black font-outfit text-xl outline-none transition-all shadow-inner placeholder:text-blue-900/10"
+                  className="w-full bg-blue-50 border-4 border-transparent focus:border-blue-600/20 focus:bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-[1.5rem] text-blue-900 font-black font-outfit text-lg sm:text-xl outline-none transition-all shadow-inner placeholder:text-blue-900/10"
                   placeholder="CODENAME"
                   value={nickname}
                   onChange={(e) => setNicknameLocal(e.target.value)}

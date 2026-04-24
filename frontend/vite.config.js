@@ -7,15 +7,15 @@ export default defineConfig({
     port: 2520,
     proxy: {
       '/api': {
-        target: 'http://localhost:8002',
+        target: 'https://quiz-platform-6whj.onrender.com',
         changeOrigin: true,
       },
       '/static': {
-        target: 'http://localhost:8002',
+        target: 'https://quiz-platform-6whj.onrender.com',
         changeOrigin: true,
       },
       '/ws': {
-        target: 'ws://localhost:8002',
+        target: 'wss://quiz-platform-6whj.onrender.com',
         ws: true,
         changeOrigin: true,
       },

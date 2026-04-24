@@ -80,10 +80,10 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto mt-4 md:mt-0">
             <button
               onClick={() => navigate('/host/quiz/new')}
-              className="btn-yellow px-6 py-4 text-lg flex items-center gap-2 group"
+              className="btn-yellow px-6 py-4 text-lg flex items-center justify-center gap-2 group flex-1 md:flex-none"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
@@ -148,7 +148,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 mt-auto relative z-10 pt-5 border-t border-blue-900/5">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-auto relative z-10 pt-5 border-t border-blue-900/5">
                   <button
                     onClick={() => handleStart(quiz)}
                     disabled={starting === quiz.id}
@@ -166,7 +166,7 @@ export default function DashboardPage() {
                       </>
                     )}
                   </button>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-center sm:justify-end">
                     <button
                       onClick={() => handleEdit(quiz)}
                       className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-inner"

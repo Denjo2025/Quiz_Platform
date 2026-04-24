@@ -26,6 +26,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
   const [imageUrl, setImageUrl] = useState(initial?.image_url || null)
   const [imagePreview, setImagePreview] = useState(initial?.image_url || null)
   const [uploadingQ, setUploadingQ] = useState(false)
+  const [isTextAnswer, setIsTextAnswer] = useState(initial?.is_text_answer || false)
   const [answers, setAnswers] = useState(
     initial?.answers?.length
       ? initial.answers.map((a) => ({ text: a.text || '', is_correct: a.is_correct, image_url: a.image_url || null }))
@@ -91,13 +92,26 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
 
   const handleSave = () => {
     if (!text.trim()) { setError('Question text is required.'); return }
-    if (answers.some((a) => !a.text.trim() && !a.image_url)) { setError('All answers need text or image.'); return }
-    if (!answers.some((a) => a.is_correct)) { setError('Select a correct answer.'); return }
+    
+    if (isTextAnswer) {
+      const correctAnswers = answers.filter(a => a.is_correct)
+      if (correctAnswers.length !== 1) {
+        setError('Mark one answer as correct.'); return
+      }
+      if (!correctAnswers[0].text.trim()) {
+        setError('Correct answer text is required.'); return
+      }
+    } else {
+      if (answers.some((a) => !a.text.trim() && !a.image_url)) { setError('All answers need text or image.'); return }
+      if (!answers.some((a) => a.is_correct)) { setError('Select a correct answer.'); return }
+    }
+    
     onSave({
       text: text.trim(),
       image_url: imageUrl || null,
       time_limit_seconds: timeLimit,
       points,
+      is_text_answer: isTextAnswer,
       answers: answers.map(({ _preview, ...rest }) => rest),
     })
   }
@@ -140,6 +154,34 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
               </select>
             </div>
           </div>
+
+          <div className="space-y-4">
+            <label className="block text-blue-900/30 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Answer Type</label>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => { setIsTextAnswer(false); setAnswers([emptyAnswer(), emptyAnswer()]) }}
+                className={`flex-1 py-4 px-6 rounded-[2rem] font-black font-outfit uppercase tracking-widest text-sm transition-all ${
+                  !isTextAnswer 
+                    ? 'bg-blue-600 text-white shadow-lg' 
+                    : 'bg-blue-50 text-blue-900 hover:bg-blue-100'
+                }`}
+              >
+                Multiple Choice
+              </button>
+              <button
+                type="button"
+                onClick={() => { setIsTextAnswer(true); setAnswers([emptyAnswer(), emptyAnswer()]) }}
+                className={`flex-1 py-4 px-6 rounded-[2rem] font-black font-outfit uppercase tracking-widest text-sm transition-all ${
+                  isTextAnswer 
+                    ? 'bg-blue-600 text-white shadow-lg' 
+                    : 'bg-blue-50 text-blue-900 hover:bg-blue-100'
+                }`}
+              >
+                Type Answer
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="w-full lg:w-64 space-y-4">
@@ -178,56 +220,86 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
       <div className="space-y-6">
         <label className="block text-blue-900/30 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Response Matrices</label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {answers.map((ans, idx) => (
-            <div key={idx} className={`relative p-6 rounded-[2.5rem] border-2 transition-all flex flex-col gap-4 ${ans.is_correct ? 'bg-emerald-50 border-emerald-200 shadow-lg shadow-emerald-600/5' : 'bg-blue-50 border-transparent shadow-inner'}`}>
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => setCorrect(idx)}
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-md ${ans.is_correct ? 'bg-emerald-500 text-white' : 'bg-white text-blue-900/20'}`}
-                >
-                  {ans.is_correct ? <span className="text-xl">✓</span> : <span className="font-black text-xl font-outfit">{ANSWER_LABELS[idx]}</span>}
-                </button>
-                <input
-                  className="flex-1 bg-transparent border-none outline-none text-blue-900 font-black font-outfit text-lg placeholder-blue-900/20"
-                  placeholder="Intelligence Data..."
-                  value={ans.text}
-                  onChange={(e) => updateAnswerText(idx, e.target.value)}
-                />
-                <button
-                  type="button"
-                  onClick={() => ansImgRefs.current[idx].click()}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${ans.image_url ? 'bg-blue-600 text-white' : 'bg-white text-blue-900/20 shadow-sm'}`}
-                >
-                  🖼️
-                </button>
-                <input ref={(el) => (ansImgRefs.current[idx] = el)} type="file" accept="image/*" className="hidden" onChange={(e) => handleAnswerImage(idx, e.target.files?.[0])} />
-                {answers.length > 2 && (
-                  <button onClick={() => removeAnswer(idx)} className="text-rose-500/30 hover:text-rose-500 transition-colors">✕</button>
+          {isTextAnswer ? (
+            <div className="col-span-2 p-6 rounded-[2.5rem] bg-emerald-50 border-2 border-emerald-200 shadow-lg">
+              <p className="text-blue-900/50 text-[10px] font-black uppercase tracking-widest mb-4">Type the correct answer below</p>
+              {answers.map((ans, idx) => (
+                <div key={idx} className="flex items-center gap-4 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setCorrect(idx)}
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-md ${ans.is_correct ? 'bg-emerald-500 text-white' : 'bg-white text-blue-900/20'}`}
+                  >
+                    {ans.is_correct ? <span className="text-xl">✓</span> : <span className="font-black text-xl font-outfit">{idx + 1}</span>}
+                  </button>
+                  <input
+                    className="flex-1 px-6 py-4 rounded-[2rem] bg-white border-2 border-transparent focus:border-emerald-500 text-blue-900 font-black font-outfit text-lg outline-none transition-all"
+                    placeholder="Type the correct answer..."
+                    value={ans.text}
+                    onChange={(e) => updateAnswerText(idx, e.target.value)}
+                  />
+                </div>
+              ))}
+              <p className="text-blue-900/30 text-[10px] font-black uppercase tracking-widest mt-4">Players will type their answer - case insensitive matching</p>
+            </div>
+          ) : (
+            answers.map((ans, idx) => (
+              <div key={idx} className={`relative p-6 rounded-[2.5rem] border-2 transition-all flex flex-col gap-4 ${ans.is_correct ? 'bg-emerald-50 border-emerald-200 shadow-lg shadow-emerald-600/5' : 'bg-blue-50 border-transparent shadow-inner'}`}>
+                <div className="flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setCorrect(idx)}
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-md ${ans.is_correct ? 'bg-emerald-500 text-white' : 'bg-white text-blue-900/20'}`}
+                  >
+                    {ans.is_correct ? <span className="text-xl">✓</span> : <span className="font-black text-xl font-outfit">{ANSWER_LABELS[idx]}</span>}
+                  </button>
+                  <input
+                    className="flex-1 bg-transparent border-none outline-none text-blue-900 font-black font-outfit text-lg placeholder-blue-900/20"
+                    placeholder="Intelligence Data..."
+                    value={ans.text}
+                    onChange={(e) => updateAnswerText(idx, e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => ansImgRefs.current[idx].click()}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${ans.image_url ? 'bg-blue-600 text-white' : 'bg-white text-blue-900/20 shadow-sm'}`}
+                  >
+                    🖼️
+                  </button>
+                  <input ref={(el) => (ansImgRefs.current[idx] = el)} type="file" accept="image/*" className="hidden" onChange={(e) => handleAnswerImage(idx, e.target.files?.[0])} />
+                  {answers.length > 2 && (
+                    <button onClick={() => removeAnswer(idx)} className="text-rose-500/30 hover:text-rose-500 transition-colors">✕</button>
+                  )}
+                </div>
+                
+                {(ans._preview || ans.image_url) && (
+                  <div className="flex items-center gap-4 animate-slide-up pl-16">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-white shadow-sm">
+                      <img src={ans._preview || ans.image_url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <button onClick={() => removeAnswerImage(idx)} className="text-[10px] font-black uppercase text-rose-500">Remove</button>
+                  </div>
                 )}
               </div>
-              
-              {(ans._preview || ans.image_url) && (
-                <div className="flex items-center gap-4 animate-slide-up pl-16">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-white shadow-sm">
-                    <img src={ans._preview || ans.image_url} alt="" className="w-full h-full object-cover" />
-                  </div>
-                  <button onClick={() => removeAnswerImage(idx)} className="text-[10px] font-black uppercase text-rose-500">Remove</button>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {answers.length < 4 && (
-            <button
-              onClick={addAnswer}
-              className="py-6 rounded-[2.5rem] border-4 border-dashed border-blue-100 text-blue-900/20 hover:text-blue-600 hover:border-blue-600/20 hover:bg-blue-50 transition-all font-black font-outfit uppercase tracking-widest text-[10px]"
-            >
-              + ADD RESPONSE MATRIX
-            </button>
+            ))
           )}
         </div>
+
+        {!isTextAnswer && answers.length < 4 && (
+          <button
+            onClick={addAnswer}
+            className="py-6 rounded-[2.5rem] border-4 border-dashed border-blue-100 text-blue-900/20 hover:text-blue-600 hover:border-blue-600/20 hover:bg-blue-50 transition-all font-black font-outfit uppercase tracking-widest text-[10px]"
+          >
+            + ADD RESPONSE MATRIX
+          </button>
+        )}
       </div>
+
+      {error && (
+        <div className="p-4 rounded-[1.5rem] bg-rose-50 border-2 border-rose-200 text-rose-500 font-black text-sm">
+          {error}
+        </div>
+      )}
 
       <div className="flex gap-4 pt-6 border-t-2 border-blue-50">
         <button onClick={handleSave} className="btn-primary flex-1 py-5 text-lg font-black italic bg-blue-600 text-white shadow-xl shadow-blue-600/20">
@@ -240,5 +312,3 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
     </div>
   )
 }
-
-

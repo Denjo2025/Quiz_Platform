@@ -12,6 +12,7 @@ class PlayerState:
     score: int = 0
     current_answer: Optional[int] = None   # index of chosen answer
     answer_time: Optional[float] = None    # seconds taken to answer
+    answer_text: Optional[str] = None      # text answer for text-answer questions
 
 
 @dataclass

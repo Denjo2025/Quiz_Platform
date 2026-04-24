@@ -31,7 +31,6 @@ class Question(Base):
     image_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     time_limit_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=20)
     points: Mapped[int] = mapped_column(Integer, nullable=False, default=1000)
-    # JSON column: list of {"text": str, "is_correct": bool}
     answers: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
 
     quiz: Mapped["Quiz"] = relationship("Quiz", back_populates="questions")
