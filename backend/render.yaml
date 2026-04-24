@@ -15,8 +15,8 @@ services:
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: 10080
       - key: DATABASE_URL
-        value: postgres://neondb_owner:npg_1qsapTojtMB8@ep-holy-heart-a4alz82t-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-        sync: false
+        value: postgres://neondb_owner:npg_1qsapTojtMB8@ep-holy-heart-a4alz82t-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+        sync: true
       - key: CLOUDINARY_URL
         value: cloudinary://637167941541637:ph-Jre4_0OXZT5exhkbLy8cHWrU@dmohrr8hq
         sync: false
