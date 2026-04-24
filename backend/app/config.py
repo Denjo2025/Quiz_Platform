@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080
     UPLOAD_DIR: str = "uploads"
     MAX_IMAGE_SIZE_MB: int = 5
+    CLOUDINARY_URL: str = ""
 
     class Config:
         env_file = ".env"
