@@ -55,7 +55,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
   }
 
   const setCorrect = (idx) =>
-    setAnswers((prev) => prev.map((a, i) => ({ ...a, is_correct: !a.is_correct })))
+    setAnswers((prev) => prev.map((a, i) => ({ ...a, is_correct: isTextAnswer ? a.is_correct : i === idx })))
 
   const updateAnswerText = (idx, val) =>
     setAnswers((prev) => prev.map((a, i) => (i === idx ? { ...a, text: val } : a)))
@@ -81,7 +81,10 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
 
   const addAnswer = () => {
     const maxAnswers = isTextAnswer ? 10 : 4
-    if (answers.length < maxAnswers) setAnswers((prev) => [...prev, emptyAnswer()])
+    if (answers.length < maxAnswers) {
+      const newAnswer = { ...emptyAnswer(), is_correct: isTextAnswer }
+      setAnswers((prev) => [...prev, newAnswer])
+    }
   }
 
   const removeAnswer = (idx) => {
@@ -126,7 +129,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
   }
 
   return (
-    <div className="bg-white rounded-[3.5rem] p-10 space-y-10 shadow-2xl animate-fade-in relative overflow-hidden border-4 border-blue-50">
+    <div className="bg-white rounded-[1.5rem] sm:rounded-[3.5rem] p-4 sm:p-10 space-y-4 sm:space-y-10 shadow-2xl animate-fade-in relative overflow-hidden border-4 border-blue-50">
       <div className="absolute top-0 left-0 w-full h-2 bg-blue-600/10" />
       
       <div className="flex flex-col lg:flex-row gap-10">
@@ -134,18 +137,18 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
           <div className="space-y-4">
             <label className="block text-blue-900/30 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Section Challenge</label>
             <textarea
-              className="w-full px-8 py-6 rounded-[2.5rem] bg-blue-50 border-2 border-transparent focus:border-blue-600/20 focus:bg-white text-blue-900 font-black font-outfit text-xl outline-none transition-all shadow-inner h-32 resize-none"
+              className="w-full px-4 sm:px-8 py-3 sm:py-6 rounded-2xl sm:rounded-[2.5rem] bg-blue-50 border-2 border-transparent focus:border-blue-600/20 focus:bg-white text-blue-900 font-black font-outfit text-base sm:text-xl outline-none transition-all shadow-inner h-20 sm:h-32 resize-none"
               placeholder="Input challenge intelligence..."
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div className="space-y-4">
               <label className="block text-blue-900/30 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Duration</label>
               <select 
-                className="w-full px-8 py-5 rounded-[2rem] bg-blue-50 text-blue-900 font-black font-outfit uppercase tracking-widest text-sm outline-none shadow-inner appearance-none cursor-pointer"
+                className="w-full px-4 sm:px-8 py-2 sm:py-5 rounded-xl sm:rounded-[2rem] bg-blue-50 text-blue-900 font-black font-outfit uppercase tracking-widest text-[10px] sm:text-sm outline-none shadow-inner appearance-none cursor-pointer"
                 value={timeLimit} 
                 onChange={(e) => setTimeLimit(Number(e.target.value))}
               >
@@ -155,7 +158,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
             <div className="space-y-4">
               <label className="block text-blue-900/30 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Mission Value</label>
               <select 
-                className="w-full px-8 py-5 rounded-[2rem] bg-blue-50 text-blue-900 font-black font-outfit uppercase tracking-widest text-sm outline-none shadow-inner appearance-none cursor-pointer"
+                className="w-full px-4 sm:px-8 py-2 sm:py-5 rounded-xl sm:rounded-[2rem] bg-blue-50 text-blue-900 font-black font-outfit uppercase tracking-widest text-[10px] sm:text-sm outline-none shadow-inner appearance-none cursor-pointer"
                 value={points} 
                 onChange={(e) => setPoints(Number(e.target.value))}
               >
@@ -170,7 +173,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
               <button
                 type="button"
                 onClick={() => { setIsTextAnswer(false); setAnswers([emptyAnswer(), emptyAnswer()]) }}
-                className={`flex-1 py-4 px-6 rounded-[2rem] font-black font-outfit uppercase tracking-widest text-sm transition-all ${
+                className={`flex-1 py-2 sm:py-4 px-3 sm:px-6 rounded-xl sm:rounded-[2rem] font-black font-outfit uppercase tracking-widest text-[10px] sm:text-sm transition-all ${
                   !isTextAnswer 
                     ? 'bg-blue-600 text-white shadow-lg' 
                     : 'bg-blue-50 text-blue-900 hover:bg-blue-100'
@@ -180,8 +183,8 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
               </button>
               <button
                 type="button"
-                onClick={() => { setIsTextAnswer(true); setAnswers([emptyAnswer(), emptyAnswer()]) }}
-                className={`flex-1 py-4 px-6 rounded-[2rem] font-black font-outfit uppercase tracking-widest text-sm transition-all ${
+                onClick={() => { setIsTextAnswer(true); setAnswers((prev) => prev.map((a) => ({ ...a, is_correct: true }))) }}
+                className={`flex-1 py-2 sm:py-4 px-3 sm:px-6 rounded-xl sm:rounded-[2rem] font-black font-outfit uppercase tracking-widest text-[10px] sm:text-sm transition-all ${
                   isTextAnswer 
                     ? 'bg-blue-600 text-white shadow-lg' 
                     : 'bg-blue-50 text-blue-900 hover:bg-blue-100'
@@ -231,34 +234,34 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {isTextAnswer ? (
             <>
-              <div className="col-span-2 p-6 rounded-[2.5rem] bg-emerald-50 border-2 border-emerald-200 shadow-lg">
+              <div className="col-span-1 sm:col-span-2 p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] bg-emerald-50 border-2 border-emerald-200 shadow-lg">
                 <p className="text-blue-900/50 text-[10px] font-black uppercase tracking-widest mb-4">Add all correct answers (any match = correct)</p>
                 {answers.map((ans, idx) => (
-                  <div key={idx} className="flex items-center gap-4 mb-4">
+                  <div key={idx} className="flex items-center gap-2 sm:gap-4 mb-4">
                     <button
                       type="button"
                       onClick={() => setCorrect(idx)}
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-md ${ans.is_correct ? 'bg-emerald-500 text-white' : 'bg-white text-emerald-500/30'}`}
+                      className={`w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-2xl flex items-center justify-center transition-all shadow-md ${ans.is_correct ? 'bg-emerald-500 text-white' : 'bg-white text-emerald-500/30'}`}
                     >
                       {ans.is_correct ? <span className="text-xl">✓</span> : <span className="font-black text-xl font-outfit">+</span>}
                     </button>
                     <input
-                      className="flex-1 px-6 py-4 rounded-[2rem] bg-white border-2 border-transparent focus:border-emerald-500 text-blue-900 font-black font-outfit text-lg outline-none transition-all"
+                      className="flex-1 min-w-0 px-3 sm:px-6 py-2 sm:py-4 rounded-xl sm:rounded-[2rem] bg-white border-2 border-transparent focus:border-emerald-500 text-blue-900 font-black font-outfit text-sm sm:text-lg outline-none transition-all"
                       placeholder="Type a correct answer..."
                       value={ans.text}
                       onChange={(e) => updateAnswerText(idx, e.target.value)}
                     />
                     {answers.length > 1 && (
-                      <button onClick={() => removeAnswer(idx)} className="text-rose-500/30 hover:text-rose-500 transition-colors">✕</button>
+                      <button onClick={() => removeAnswer(idx)} className="text-rose-500/30 hover:text-rose-500 transition-colors flex-shrink-0 p-2">✕</button>
                     )}
                   </div>
                 ))}
-                <div className="flex items-center justify-between mt-4">
-                  <p className="text-blue-900/30 text-[10px] font-black uppercase tracking-widest">Players will type their answer - case insensitive matching</p>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 gap-4">
+                  <p className="text-blue-900/30 text-[10px] font-black uppercase tracking-widest leading-relaxed">Players will type their answer - case insensitive matching</p>
                   {answers.length < 10 && (
                     <button
                       onClick={addAnswer}
-                      className="text-emerald-600 font-black text-xs uppercase tracking-widest hover:text-emerald-700"
+                      className="text-emerald-600 font-black text-xs uppercase tracking-widest hover:text-emerald-700 flex-shrink-0 bg-emerald-500/10 px-4 py-2 rounded-xl"
                     >
                       + Add more
                     </button>
@@ -268,17 +271,17 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
             </>
           ) : (
             answers.map((ans, idx) => (
-              <div key={idx} className={`relative p-6 rounded-[2.5rem] border-2 transition-all flex flex-col gap-4 ${ans.is_correct ? 'bg-emerald-50 border-emerald-200 shadow-lg shadow-emerald-600/5' : 'bg-blue-50 border-transparent shadow-inner'}`}>
-                <div className="flex items-center gap-4">
+              <div key={idx} className={`relative p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 transition-all flex flex-col gap-2 sm:gap-4 ${ans.is_correct ? 'bg-emerald-50 border-emerald-200 shadow-lg shadow-emerald-600/5' : 'bg-blue-50 border-transparent shadow-inner'}`}>
+                <div className="flex items-center gap-2 sm:gap-4">
                   <button
                     type="button"
                     onClick={() => setCorrect(idx)}
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-md ${ans.is_correct ? 'bg-emerald-500 text-white' : 'bg-white text-blue-900/20'}`}
+                    className={`w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all shadow-md ${ans.is_correct ? 'bg-emerald-500 text-white' : 'bg-white text-blue-900/20'}`}
                   >
-                    {ans.is_correct ? <span className="text-xl">✓</span> : <span className="font-black text-xl font-outfit">{ANSWER_LABELS[idx]}</span>}
+                    {ans.is_correct ? <span className="text-xl">✓</span> : <span className="font-black text-lg sm:text-xl font-outfit">{ANSWER_LABELS[idx]}</span>}
                   </button>
                   <input
-                    className="flex-1 bg-transparent border-none outline-none text-blue-900 font-black font-outfit text-lg placeholder-blue-900/20"
+                    className="flex-1 min-w-0 bg-transparent border-none outline-none text-blue-900 font-black font-outfit text-sm sm:text-lg placeholder-blue-900/20"
                     placeholder="Intelligence Data..."
                     value={ans.text}
                     onChange={(e) => updateAnswerText(idx, e.target.value)}
@@ -286,13 +289,13 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
                   <button
                     type="button"
                     onClick={() => ansImgRefs.current[idx].click()}
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${ans.image_url ? 'bg-blue-600 text-white' : 'bg-white text-blue-900/20 shadow-sm'}`}
+                    className={`w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 rounded-lg sm:rounded-xl flex items-center justify-center transition-all ${ans.image_url ? 'bg-blue-600 text-white' : 'bg-white text-blue-900/20 shadow-sm'}`}
                   >
-                    🖼️
+                    <span className="text-xs sm:text-base">🖼️</span>
                   </button>
                   <input ref={(el) => (ansImgRefs.current[idx] = el)} type="file" accept="image/*" className="hidden" onChange={(e) => handleAnswerImage(idx, e.target.files?.[0])} />
                   {answers.length > 2 && (
-                    <button onClick={() => removeAnswer(idx)} className="text-rose-500/30 hover:text-rose-500 transition-colors">✕</button>
+                    <button onClick={() => removeAnswer(idx)} className="text-rose-500/30 hover:text-rose-500 transition-colors p-1 flex-shrink-0 text-sm sm:text-base">✕</button>
                   )}
                 </div>
                 
@@ -312,7 +315,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
         {!isTextAnswer && answers.length < 4 && (
           <button
             onClick={addAnswer}
-            className="py-6 rounded-[2.5rem] border-4 border-dashed border-blue-100 text-blue-900/20 hover:text-blue-600 hover:border-blue-600/20 hover:bg-blue-50 transition-all font-black font-outfit uppercase tracking-widest text-[10px]"
+            className="py-3 sm:py-6 rounded-2xl sm:rounded-[2.5rem] border-4 border-dashed border-blue-100 text-blue-900/20 hover:text-blue-600 hover:border-blue-600/20 hover:bg-blue-50 transition-all font-black font-outfit uppercase tracking-widest text-[9px] sm:text-[10px]"
           >
             + ADD RESPONSE MATRIX
           </button>
@@ -325,11 +328,11 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
         </div>
       )}
 
-      <div className="flex gap-4 pt-6 border-t-2 border-blue-50">
+      <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t-2 border-blue-50">
         <button onClick={handleSave} className="btn-primary flex-1 py-5 text-lg font-black italic bg-blue-600 text-white shadow-xl shadow-blue-600/20">
           CONFIRM INTELLIGENCE
         </button>
-        <button onClick={onCancel} className="btn-secondary px-10 py-5 text-lg font-black italic bg-blue-50 text-blue-900">
+        <button onClick={onCancel} className="btn-secondary w-full sm:w-auto px-10 py-5 text-lg font-black italic bg-blue-50 text-blue-900">
           ABORT
         </button>
       </div>
