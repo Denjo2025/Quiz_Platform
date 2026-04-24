@@ -1,4 +1,3 @@
-import uuid
 import logging
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 import cloudinary
@@ -13,13 +12,12 @@ logger = logging.getLogger(__name__)
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
 MAX_BYTES = settings.MAX_IMAGE_SIZE_MB * 1024 * 1024
 
-if settings.CLOUDINARY_URL:
-    cloudinary.config(
-        cloud_name=settings.CLOUDINARY_URL.split("@")[1] if "@" in settings.CLOUDINARY_URL else "",
-        api_key=settings.CLOUDINARY_URL.split(":")[2] if ":" in settings.CLOUDINARY_URL else "",
-        api_secret=settings.CLOUDINARY_URL.split("@")[0].split(":")[-1] if "@" in settings.CLOUDINARY_URL else "",
-        secure=True
-    )
+cloudinary.config(
+    cloud_name="dmohrr8hq",
+    api_key="637167941541637",
+    api_secret="ph-Jre4_0OXZT5exhkbLy8cHWrU",
+    secure=True
+)
 
 
 @router.post("/image")
@@ -37,9 +35,6 @@ async def upload_image(
             status_code=400,
             detail=f"File too large. Max size is {settings.MAX_IMAGE_SIZE_MB}MB"
         )
-
-    if not settings.CLOUDINARY_URL:
-        raise HTTPException(status_code=500, detail="Cloudinary not configured")
 
     try:
         upload_result = cloudinary.uploader.upload(
