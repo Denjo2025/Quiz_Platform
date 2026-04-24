@@ -28,7 +28,7 @@ export default function ConfirmModal({ show, title, message, confirmText = 'Conf
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={isAlert ? onConfirm : onCancel} />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={isAlert ? onConfirm : onCancel} />
       <div
         ref={modalRef}
         className="relative w-full max-w-md glass-card rounded-2xl p-6 space-y-4 animate-fade-in"
