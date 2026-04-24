@@ -1,7 +1,7 @@
 services:
   - name: quiz-backend
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT --root-path /api
     envVars:
       - key: SECRET_KEY
         generateValue: "32"
