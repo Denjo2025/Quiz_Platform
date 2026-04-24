@@ -14,5 +14,6 @@ services:
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: 10080
       - key: DATABASE_URL
+        value: postgres://neondb_owner:npg_1qsapTojtMB8@ep-holy-heart-a4alz82t.us-east-1.aws.neon.tech/neondb?sslmode=require
         sync: false
     plan: free
