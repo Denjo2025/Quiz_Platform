@@ -102,10 +102,6 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
       if (validAnswers.length < 1) {
         setError('Enter at least one correct answer.'); return
       }
-      const correctAnswers = validAnswers.filter(a => a.is_correct)
-      if (correctAnswers.length < 1) {
-        setError('Mark at least one answer as correct.'); return
-      }
       onSave({
         text: text.trim(),
         image_url: imageUrl || null,
