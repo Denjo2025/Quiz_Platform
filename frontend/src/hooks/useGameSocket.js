@@ -22,7 +22,8 @@ export function useGameSocket({ roomCode, role, token, nickname }) {
 
   const getUrl = useCallback(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-    const host = window.location.host
+    const isVercel = window.location.host.includes('vercel.app')
+    const host = isVercel ? 'quiz-platform-6whj.onrender.com' : window.location.host
     let url
     if (role === 'host') {
       url = `${protocol}://${host}/ws/host/${roomCode}?token=${token}`

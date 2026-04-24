@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://quiz-platform-6whj.onrender.com/api',
 })
 
 let authToken = null
