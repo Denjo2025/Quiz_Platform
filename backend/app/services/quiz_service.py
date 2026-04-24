@@ -43,6 +43,7 @@ def add_question(db: Session, quiz_id: int, data: QuestionCreate) -> Question:
         image_url=data.image_url,
         time_limit_seconds=data.time_limit_seconds,
         points=data.points,
+        is_text_answer=data.is_text_answer,
         answers=[a.model_dump() for a in data.answers],
     )
     db.add(q)
@@ -57,6 +58,7 @@ def update_question(db: Session, question: Question, data: QuestionUpdate) -> Qu
     question.time_limit_seconds = data.time_limit_seconds
     question.points = data.points
     question.order_index = data.order_index
+    question.is_text_answer = data.is_text_answer
     question.answers = [a.model_dump() for a in data.answers]
     db.commit()
     db.refresh(question)

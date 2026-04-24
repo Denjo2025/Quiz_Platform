@@ -13,6 +13,7 @@ class QuestionCreate(BaseModel):
     image_url: Optional[str] = None
     time_limit_seconds: int = 20
     points: int = 1000
+    is_text_answer: bool = False
     answers: List[AnswerOption]
     order_index: int = 0
 
@@ -26,12 +27,10 @@ class QuestionCreate(BaseModel):
     @field_validator("answers")
     @classmethod
     def validate_answers(cls, v):
-        if len(v) < 2:
-            raise ValueError("Must have at least 2 answer options")
-        if cls.model_fields.get('is_text_answer') and len(v) > 10:
-            raise ValueError("Text answer questions can have max 10 options")
-        if not cls.model_fields.get('is_text_answer') and len(v) > 4:
-            raise ValueError("Must have 2 to 4 answer options")
+        if len(v) < 1:
+            raise ValueError("Must have at least 1 answer option")
+        if len(v) > 10:
+            raise ValueError("Can have max 10 answer options")
         correct_count = sum(1 for a in v if a.is_correct)
         if correct_count < 1:
             raise ValueError("At least one answer must be marked correct")
@@ -50,6 +49,7 @@ class QuestionResponse(BaseModel):
     image_url: Optional[str] = None
     time_limit_seconds: int
     points: int
+    is_text_answer: bool = False
     answers: List[AnswerOption]
 
     model_config = {"from_attributes": True}
