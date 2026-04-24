@@ -67,6 +67,14 @@ async def lifespan(app: FastAPI):
     upload_dir.mkdir(parents=True, exist_ok=True)
     logger.info("Quiz Platform backend starting up...")
     
+    # Create tables on startup
+    try:
+        from app.database import Base, engine
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Error creating database tables: {e}")
+    
     # Start background task to cleanup stale waiting rooms
     cleanup_task = asyncio.create_task(_cleanup_stale_waiting_rooms())
     
