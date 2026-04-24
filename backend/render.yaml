@@ -6,7 +6,7 @@ services:
       - key: SECRET_KEY
         generateValue: "32"
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.12"
       - key: UPLOAD_DIR
         value: /opt/render/uploads
       - key: MAX_IMAGE_SIZE_MB
@@ -15,5 +15,8 @@ services:
         value: 10080
       - key: DATABASE_URL
         value: postgres://neondb_owner:npg_1qsapTojtMB8@ep-holy-heart-a4alz82t.us-east-1.aws.neon.tech/neondb?sslmode=require
+        sync: false
+      - key: CLOUDINARY_URL
+        value: cloudinary://637167941541637:ph-Jre4_0OXZT5exhkbLy8cHWrU@dmohrr8hq
         sync: false
     plan: free
