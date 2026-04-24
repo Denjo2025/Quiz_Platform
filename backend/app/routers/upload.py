@@ -14,7 +14,12 @@ ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
 MAX_BYTES = settings.MAX_IMAGE_SIZE_MB * 1024 * 1024
 
 if settings.CLOUDINARY_URL:
-    cloudinary.config(settings.CLOUDINARY_URL)
+    cloudinary.config(
+        cloud_name=settings.CLOUDINARY_URL.split("@")[1] if "@" in settings.CLOUDINARY_URL else "",
+        api_key=settings.CLOUDINARY_URL.split(":")[2] if ":" in settings.CLOUDINARY_URL else "",
+        api_secret=settings.CLOUDINARY_URL.split("@")[0].split(":")[-1] if "@" in settings.CLOUDINARY_URL else "",
+        secure=True
+    )
 
 
 @router.post("/image")
