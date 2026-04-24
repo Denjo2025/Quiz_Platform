@@ -216,7 +216,7 @@ async def on_host_start_game(room: GameRoom) -> None:
     logger.info(f"[START_GAME] Players check: total={len(room.players)}, connected={len(connected_players)}")
     
     if not connected_players:
-        await send_to_host(room, {"type": events.ERROR, "payload: {"message": "Need at least one player to start."}})
+        await send_to_host(room, {"type": events.ERROR, "payload": {"message": "Need at least one player to start."}})
         return
     if not room.questions:
         await send_to_host(room, {"type": events.ERROR, "payload": {"message": "No questions in this quiz!"}})
