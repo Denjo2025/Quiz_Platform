@@ -91,7 +91,12 @@ app = FastAPI(
 # CORS — specific origin is required when allow_credentials=True
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:2520", "http://127.0.0.1:2520"],
+    allow_origins=[
+        "http://localhost:2520",
+        "http://127.0.0.1:2520",
+        "https://qusapp.vercel.app",
+        "https://quiz-platform-6whj.onrender.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
