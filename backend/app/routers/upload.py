@@ -1,3 +1,4 @@
+import io
 import logging
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 import cloudinary
@@ -37,8 +38,11 @@ async def upload_image(
         )
 
     try:
+        file_buffer = io.BytesIO(data)
+        file_buffer.name = file.filename or "image.jpg"
+        
         upload_result = cloudinary.uploader.upload(
-            data,
+            file_buffer,
             folder="quiz_platform",
             transformation=[
                 {"quality": "auto:good", "fetch_format": "auto"}
