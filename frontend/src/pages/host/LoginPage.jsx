@@ -45,7 +45,7 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-md relative z-10 animate-fade-in">
-        <div className="bg-white rounded-[3rem] p-10 shadow-2xl space-y-8 relative overflow-hidden border-b-8 border-blue-600/10">
+        <div className="bg-white rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-10 shadow-2xl space-y-8 relative overflow-hidden border-b-8 border-blue-600/10">
           <div className="absolute top-0 left-0 w-full h-2 bg-blue-600/10" />
           
           <div className="text-center space-y-4">
@@ -92,19 +92,19 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-yellow w-full py-5 text-xl font-black italic shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="btn-yellow w-full px-4 sm:px-10 py-4 sm:py-5 text-lg sm:text-xl font-black italic shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               {loading ? (
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-5 h-5 border-4 border-blue-900/20 border-t-blue-900 rounded-full animate-spin" />
-                  <span>AUTHENTICATING...</span>
+                <div className="flex items-center justify-center gap-2 sm:gap-3">
+                  <div className="w-5 h-5 flex-shrink-0 border-4 border-blue-900/20 border-t-blue-900 rounded-full animate-spin" />
+                  <span className="truncate">AUTHENTICATING...</span>
                 </div>
               ) : (
                 <div className="flex items-center justify-center gap-2">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                   </svg>
-                  <span>ESTABLISH UPLINK</span>
+                  <span className="truncate">ESTABLISH UPLINK</span>
                 </div>
               )}
             </button>

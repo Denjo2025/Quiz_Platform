@@ -26,11 +26,15 @@ class QuestionCreate(BaseModel):
     @field_validator("answers")
     @classmethod
     def validate_answers(cls, v):
-        if len(v) < 2 or len(v) > 4:
+        if len(v) < 2:
+            raise ValueError("Must have at least 2 answer options")
+        if cls.model_fields.get('is_text_answer') and len(v) > 10:
+            raise ValueError("Text answer questions can have max 10 options")
+        if not cls.model_fields.get('is_text_answer') and len(v) > 4:
             raise ValueError("Must have 2 to 4 answer options")
         correct_count = sum(1 for a in v if a.is_correct)
-        if correct_count != 1:
-            raise ValueError("Exactly one answer must be marked correct")
+        if correct_count < 1:
+            raise ValueError("At least one answer must be marked correct")
         return v
 
 

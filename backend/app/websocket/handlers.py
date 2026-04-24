@@ -122,8 +122,12 @@ async def _broadcast_question(room: GameRoom) -> None:
     room.question_timer_task = asyncio.create_task(_schedule_question_end(room, time_limit))
 
 
-def _check_text_answer(player_answer: str, correct_answer: str) -> bool:
-    return player_answer.strip().lower() == correct_answer.strip().lower()
+def _check_text_answer(player_answer: str, correct_answers: list) -> bool:
+    player_lower = player_answer.strip().lower()
+    for correct in correct_answers:
+        if player_lower == correct.strip().lower():
+            return True
+    return False
 
 
 async def send_current_question(room: GameRoom, nickname: str) -> None:
@@ -325,11 +329,11 @@ async def send_question_end(room: GameRoom) -> None:
         (i for i, a in enumerate(question["answers"]) if a.get("is_correct")), None
     )
     
-    correct_answer_text = None
-    if is_text_answer and correct_index is not None:
-        correct_answer_text = question["answers"][correct_index]["text"]
+    correct_answer_texts = []
+    if is_text_answer:
+        correct_answer_texts = [a["text"] for a in question["answers"] if a.get("is_correct")]
     
-    logger.info(f"[DEBUG] correct_index={correct_index}, is_text_answer={is_text_answer}, correct_answer_text={correct_answer_text}")
+    logger.info(f"[DEBUG] correct_index={correct_index}, is_text_answer={is_text_answer}, correct_answer_texts={correct_answer_texts}")
     total_answers = len(question["answers"])
     answer_stats = [
         {"index": i, "count": room.answer_counts.get(i, 0)}
@@ -342,9 +346,9 @@ async def send_question_end(room: GameRoom) -> None:
         if player.current_answer is not None:
             is_correct = False
             
-            if is_text_answer and correct_answer_text:
-                is_correct = _check_text_answer(player.answer_text or "", correct_answer_text)
-                logger.info(f"[TEXT_ANSWER] {player.nickname}: answer='{player.answer_text}', correct='{correct_answer_text}', match={is_correct}")
+            if is_text_answer and correct_answer_texts:
+                is_correct = _check_text_answer(player.answer_text or "", correct_answer_texts)
+                logger.info(f"[TEXT_ANSWER] {player.nickname}: answer='{player.answer_text}', match={is_correct}")
             else:
                 is_correct = player.current_answer == correct_index
             
@@ -367,7 +371,7 @@ async def send_question_end(room: GameRoom) -> None:
                     "points_earned": points_earned,
                     "total_score": player.score,
                     "correct_answer_index": correct_index,
-                    "correct_answer_text": correct_answer_text,
+                    "correct_answer_texts": correct_answer_texts,
                 },
             })
         else:
@@ -379,7 +383,7 @@ async def send_question_end(room: GameRoom) -> None:
                     "points_earned": 0,
                     "total_score": player.score,
                     "correct_answer_index": correct_index,
-                    "correct_answer_text": correct_answer_text,
+                    "correct_answer_texts": correct_answer_texts,
                 },
             })
     
@@ -391,7 +395,7 @@ async def send_question_end(room: GameRoom) -> None:
         "type": events.QUESTION_END,
         "payload": {
             "correct_answer_index": correct_index,
-            "correct_answer_text": correct_answer_text,
+            "correct_answer_texts": correct_answer_texts,
             "answer_stats": answer_stats,
             "leaderboard": leaderboard,
         },
