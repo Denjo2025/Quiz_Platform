@@ -178,7 +178,9 @@ async def send_current_question(room: GameRoom, nickname: str) -> None:
 
 
 async def send_current_question_to_host(room: GameRoom) -> None:
-    if room.current_question_index < 0:
+    if room.current_question_index < 0 or not room.questions:
+        return
+    if room.current_question_index >= len(room.questions):
         return
 
     q_index = room.current_question_index
