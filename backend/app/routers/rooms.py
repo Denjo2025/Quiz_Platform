@@ -59,6 +59,7 @@ def create_game_room(
             "points": q.points,
             "answers": q.answers,
             "order_index": q.order_index,
+            "is_text_answer": q.is_text_answer,
         })
 
     active_rooms[room.room_code] = GameRoom(
