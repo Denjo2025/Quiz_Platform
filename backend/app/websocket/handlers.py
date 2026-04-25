@@ -101,7 +101,7 @@ async def _broadcast_question(room: GameRoom) -> None:
         player.current_answer = None
         player.answer_time = None
 
-    safe_answers = [{"text": a["text"], "image_url": a.get("image_url")} for a in question["answers"]]
+    safe_answers = [] if question.get("is_text_answer") else [{"text": a["text"], "image_url": a.get("image_url")} for a in question["answers"]]
 
     payload = {
         "question_index": q_index,
@@ -145,10 +145,11 @@ async def send_current_question(room: GameRoom, nickname: str) -> None:
         (i for i, a in enumerate(question["answers"]) if a.get("is_correct")), None
     )
 
+    is_text_answer = question.get("is_text_answer", False)
     if already_answered:
         answers_to_send = []
     else:
-        answers_to_send = [{"text": a["text"], "image_url": a.get("image_url")} for a in question["answers"]]
+        answers_to_send = [] if is_text_answer else [{"text": a["text"], "image_url": a.get("image_url")} for a in question["answers"]]
 
     payload = {
         "question_index": q_index,
@@ -157,7 +158,7 @@ async def send_current_question(room: GameRoom, nickname: str) -> None:
         "image_url": question.get("image_url"),
         "answers": answers_to_send,
         "time_limit": question["time_limit_seconds"],
-        "is_text_answer": question.get("is_text_answer", False),
+        "is_text_answer": is_text_answer,
     }
     logger.info(f"[SYNC] Sending question {q_index} to reconnector '{nickname}' already_answered={already_answered}")
     await send_to_player(room, nickname, {"type": events.QUESTION_START, "payload": payload})

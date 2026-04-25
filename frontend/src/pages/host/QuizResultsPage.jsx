@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useGameSocket } from '../../hooks/useGameSocket'
 import { useAuthStore } from '../../store/authStore'
 import { createRoom } from '../../api/room'
 import { getQuizzes } from '../../api/quiz'
@@ -19,26 +20,28 @@ export default function QuizResultsPage() {
   const [ending, setEnding] = useState(false)
   const [endConfirm, setEndConfirm] = useState(false)
 
+  const { sendMessage, lastMessage } = useGameSocket({
+    roomCode,
+    role: 'host',
+    token,
+  })
+
+  useEffect(() => {
+    if (!lastMessage) return
+    const { type } = lastMessage
+    if (type === 'game_end') {
+      navigate('/host/dashboard')
+    }
+  }, [lastMessage])
+
   const handleEndGame = () => {
     setEndConfirm(true)
   }
 
-  const confirmEndGame = async () => {
+  const confirmEndGame = () => {
     setEndConfirm(false)
     setEnding(true)
-    try {
-      const res = await fetch(`/api/rooms/${roomCode}/end`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-      })
-      if (res.ok) {
-        navigate('/host/dashboard')
-      }
-    } catch (err) {
-      console.error('End game error:', err)
-    } finally {
-      setEnding(false)
-    }
+    sendMessage({ type: 'host_end_game' })
   }
 
   const handlePlayAgain = async () => {
