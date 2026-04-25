@@ -27,6 +27,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
   const [imagePreview, setImagePreview] = useState(initial?.image_url || null)
   const [uploadingQ, setUploadingQ] = useState(false)
   const [isTextAnswer, setIsTextAnswer] = useState(initial?.is_text_answer || false)
+  const [textAnswerInput, setTextAnswerInput] = useState(initial?.answers?.[0]?.text || '')
   const [answers, setAnswers] = useState(
     initial?.answers?.length
       ? initial.answers.map((a) => ({ text: a.text || '', is_correct: a.is_correct, image_url: a.image_url || null }))
@@ -98,9 +99,8 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
     if (!text.trim()) { setError('Question text is required.'); return }
     
     if (isTextAnswer) {
-      const validAnswers = answers.filter(a => a.text.trim())
-      if (validAnswers.length < 1) {
-        setError('Enter at least one correct answer.'); return
+      if (!textAnswerInput.trim()) {
+        setError('Enter the correct answer.'); return
       }
       onSave({
         text: text.trim(),
@@ -108,7 +108,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
         time_limit_seconds: timeLimit,
         points,
         is_text_answer: isTextAnswer,
-        answers: validAnswers.map(({ _preview, ...rest }) => rest),
+        answers: [{ text: textAnswerInput.trim(), is_correct: true, image_url: null }],
       })
     } else {
       if (answers.some((a) => !a.text.trim() && !a.image_url)) { setError('All answers need text or image.'); return }
@@ -229,43 +229,21 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
         <label className="block text-blue-900/30 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Response Matrices</label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {isTextAnswer ? (
-            <>
-              <div className="col-span-1 sm:col-span-2 p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] bg-emerald-50 border-2 border-emerald-200 shadow-lg">
-                <p className="text-blue-900/50 text-[10px] font-black uppercase tracking-widest mb-4">Add all correct answers (any match = correct)</p>
-                {answers.map((ans, idx) => (
-                  <div key={idx} className="flex items-center gap-2 sm:gap-4 mb-4">
-                    <button
-                      type="button"
-                      onClick={() => setCorrect(idx)}
-                      className={`w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-2xl flex items-center justify-center transition-all shadow-md ${ans.is_correct ? 'bg-emerald-500 text-white' : 'bg-white text-emerald-500/30'}`}
-                    >
-                      {ans.is_correct ? <span className="text-xl">✓</span> : <span className="font-black text-xl font-outfit">+</span>}
-                    </button>
-                    <input
-                      className="flex-1 min-w-0 px-3 sm:px-6 py-2 sm:py-4 rounded-xl sm:rounded-[2rem] bg-white border-2 border-transparent focus:border-emerald-500 text-blue-900 font-black font-outfit text-sm sm:text-lg outline-none transition-all"
-                      placeholder="Type a correct answer..."
-                      value={ans.text}
-                      onChange={(e) => updateAnswerText(idx, e.target.value)}
-                    />
-                    {answers.length > 1 && (
-                      <button onClick={() => removeAnswer(idx)} className="text-rose-500/30 hover:text-rose-500 transition-colors flex-shrink-0 p-2">✕</button>
-                    )}
-                  </div>
-                ))}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 gap-4">
-                  <p className="text-blue-900/30 text-[10px] font-black uppercase tracking-widest leading-relaxed">Players will type their answer - case insensitive matching</p>
-                  {answers.length < 10 && (
-                    <button
-                      onClick={addAnswer}
-                      className="text-emerald-600 font-black text-xs uppercase tracking-widest hover:text-emerald-700 flex-shrink-0 bg-emerald-500/10 px-4 py-2 rounded-xl"
-                    >
-                      + Add more
-                    </button>
-                  )}
+            <div className="col-span-1 sm:col-span-2 p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] bg-emerald-50 border-2 border-emerald-200 shadow-lg">
+              <p className="text-blue-900/50 text-[10px] font-black uppercase tracking-widest mb-4">Correct Answer</p>
+              <div className="flex items-center gap-2 sm:gap-4 mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-2xl flex items-center justify-center bg-emerald-500 text-white shadow-md">
+                  <span className="text-xl">✓</span>
                 </div>
+                <input
+                  className="flex-1 min-w-0 px-3 sm:px-6 py-2 sm:py-4 rounded-xl sm:rounded-[2rem] bg-white border-2 border-transparent focus:border-emerald-500 text-blue-900 font-black font-outfit text-sm sm:text-lg outline-none transition-all"
+                  placeholder="Type the correct answer..."
+                  value={textAnswerInput}
+                  onChange={(e) => setTextAnswerInput(e.target.value)}
+                />
               </div>
-            </>
-          ) : (
+              <p className="text-blue-900/30 text-[10px] font-black uppercase tracking-widest leading-relaxed">Players will type their answer - case insensitive matching</p>
+            </div> : (
             answers.map((ans, idx) => (
               <div key={idx} className={`relative p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 transition-all flex flex-col gap-2 sm:gap-4 ${ans.is_correct ? 'bg-emerald-50 border-emerald-200 shadow-lg shadow-emerald-600/5' : 'bg-blue-50 border-transparent shadow-inner'}`}>
                 <div className="flex items-center gap-2 sm:gap-4">
