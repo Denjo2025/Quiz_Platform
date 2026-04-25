@@ -243,7 +243,8 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
                 />
               </div>
               <p className="text-blue-900/30 text-[10px] font-black uppercase tracking-widest leading-relaxed">Players will type their answer - case insensitive matching</p>
-            </div> : (
+            </div>
+          ) : (
             answers.map((ans, idx) => (
               <div key={idx} className={`relative p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 transition-all flex flex-col gap-2 sm:gap-4 ${ans.is_correct ? 'bg-emerald-50 border-emerald-200 shadow-lg shadow-emerald-600/5' : 'bg-blue-50 border-transparent shadow-inner'}`}>
                 <div className="flex items-center gap-2 sm:gap-4">
