@@ -105,12 +105,17 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:2520",
         "http://127.0.0.1:2520",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
         "https://qusapp.vercel.app",
+        "https://*.vercel.app",
         "https://quiz-platform-6whj.onrender.com",
+        "https://*.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Global exception handler
