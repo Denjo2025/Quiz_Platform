@@ -61,6 +61,9 @@ def create_game_room(
             "order_index": q.order_index,
             "is_text_answer": q.is_text_answer,
         })
+    logger.info(f"[ROOM_CREATE] Quiz {quiz.title}: {len(preloaded_questions)} questions preloaded")
+    for i, q in enumerate(preloaded_questions):
+        logger.info(f"[ROOM_CREATE] Q{i+1}: is_text_answer={q.get('is_text_answer')}")
 
     active_rooms[room.room_code] = GameRoom(
         room_code=room.room_code,

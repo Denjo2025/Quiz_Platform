@@ -113,6 +113,7 @@ async def _broadcast_question(room: GameRoom) -> None:
         "is_text_answer": question.get("is_text_answer", False),
     }
     logger.info(f"[BROADCAST_Q] Sending question_start with {len(safe_answers)} answers, is_text_answer={question.get('is_text_answer', False)}")
+    logger.info(f"[BROADCAST_Q] Payload: {payload}")
     await broadcast_to_all(room, {"type": events.QUESTION_START, "payload": payload})
     
     room._question_scored = False
