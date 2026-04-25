@@ -133,13 +133,15 @@ async def player_websocket(websocket: WebSocket, room_code: str):
     # OR if game is in progress, allow reconnection (player was removed but game started)
     if existing_player:
         logger.info(f"Replacing existing connection for '{nickname}' in room {room_code}")
-        # Preserve existing score when reconnecting
+        # Preserve existing score and seen questions when reconnecting
         room.players[nickname] = PlayerState(
             nickname=nickname,
             websocket=websocket,
             score=existing_player.score,
             current_answer=existing_player.current_answer,
             answer_time=existing_player.answer_time,
+            answer_text=existing_player.answer_text,
+            seen_questions=existing_player.seen_questions,
         )
     elif game_in_progress:
         logger.info(f"Reconnecting player '{nickname}' to room {room_code} (game in progress)")
@@ -148,6 +150,7 @@ async def player_websocket(websocket: WebSocket, room_code: str):
             room.players[nickname] = PlayerState(
                 nickname=nickname,
                 websocket=websocket,
+                seen_questions=set(),
             )
     else:
         # New player joining before game starts

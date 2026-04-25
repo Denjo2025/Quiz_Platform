@@ -13,6 +13,7 @@ class PlayerState:
     current_answer: Optional[int] = None   # index of chosen answer
     answer_time: Optional[float] = None    # seconds taken to answer
     answer_text: Optional[str] = None      # text answer for text-answer questions
+    seen_questions: set = field(default_factory=set)  # indices of questions already seen
 
 
 @dataclass

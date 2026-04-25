@@ -100,6 +100,8 @@ async def _broadcast_question(room: GameRoom) -> None:
     for player in room.players.values():
         player.current_answer = None
         player.answer_time = None
+        player.answer_text = None
+        player.seen_questions.add(q_index)
 
     safe_answers = [] if question.get("is_text_answer") else [{"text": a["text"], "image_url": a.get("image_url")} for a in question["answers"]]
 
@@ -135,46 +137,60 @@ async def send_current_question(room: GameRoom, nickname: str) -> None:
     if room.status != "in_progress" or room.current_question_index < 0:
         return
 
-    q_index = room.current_question_index
-    question = room.questions[q_index]
-
     player = room.players.get(nickname)
-    already_answered = player and player.current_answer is not None
-    current_score = player.score if player else 0
+    if not player:
+        return
 
-    correct_index = next(
-        (i for i, a in enumerate(question["answers"]) if a.get("is_correct")), None
-    )
+    player.websocket = player.websocket  # Restore websocket reference
 
-    is_text_answer = question.get("is_text_answer", False)
-    if already_answered:
-        answers_to_send = []
+    if player.current_answer is not None:
+        await send_to_player(room, nickname, {
+            "type": events.ANSWER_RECEIVED,
+            "payload": {"message": "Answer already submitted! Waiting for results..."}
+        })
+
+    q_index = room.current_question_index
+
+    if q_index < 0 or q_index >= len(room.questions):
+        return
+
+    missed_questions = [i for i in range(q_index + 1) if i not in player.seen_questions]
+
+    if missed_questions:
+        logger.info(f"[SYNC] Player '{nickname}' missed questions: {missed_questions}, sending them")
+        for missed_q_index in missed_questions:
+            question = room.questions[missed_q_index]
+            is_text_answer = question.get("is_text_answer", False)
+            answers_to_send = [] if is_text_answer else [{"text": a["text"], "image_url": a.get("image_url")} for a in question["answers"]]
+
+            payload = {
+                "question_index": missed_q_index,
+                "total_questions": len(room.questions),
+                "text": question["text"],
+                "image_url": question.get("image_url"),
+                "answers": answers_to_send,
+                "time_limit": question["time_limit_seconds"],
+                "is_text_answer": is_text_answer,
+            }
+            player.seen_questions.add(missed_q_index)
+            await send_to_player(room, nickname, {"type": events.QUESTION_START, "payload": payload})
+            await asyncio.sleep(0.1)
     else:
+        question = room.questions[q_index]
+        is_text_answer = question.get("is_text_answer", False)
         answers_to_send = [] if is_text_answer else [{"text": a["text"], "image_url": a.get("image_url")} for a in question["answers"]]
 
-    payload = {
-        "question_index": q_index,
-        "total_questions": len(room.questions),
-        "text": question["text"],
-        "image_url": question.get("image_url"),
-        "answers": answers_to_send,
-        "time_limit": question["time_limit_seconds"],
-        "is_text_answer": is_text_answer,
-    }
-    logger.info(f"[SYNC] Sending question {q_index} to reconnector '{nickname}' already_answered={already_answered}")
-    await send_to_player(room, nickname, {"type": events.QUESTION_START, "payload": payload})
-    
-    if already_answered and player:
-        is_correct = player.current_answer == correct_index
-        await send_to_player(room, nickname, {
-            "type": events.ANSWER_RESULT,
-            "payload": {
-                "correct": is_correct,
-                "points_earned": 0,
-                "total_score": current_score,
-                "correct_answer_index": correct_index,
-            }
-        })
+        payload = {
+            "question_index": q_index,
+            "total_questions": len(room.questions),
+            "text": question["text"],
+            "image_url": question.get("image_url"),
+            "answers": answers_to_send,
+            "time_limit": question["time_limit_seconds"],
+            "is_text_answer": is_text_answer,
+        }
+        logger.info(f"[SYNC] Sending current question {q_index} to reconnector '{nickname}'")
+        await send_to_player(room, nickname, {"type": events.QUESTION_START, "payload": payload})
 
 
 async def send_current_question_to_host(room: GameRoom) -> None:
