@@ -58,9 +58,11 @@ export default function GamePage() {
   useEffect(() => {
     if (!lastMessage) return
     const { type, payload } = lastMessage
+    console.log('[GamePage] Received message:', type, payload)
 
     switch (type) {
       case 'question_start':
+        console.log('[GamePage] question_start received, updating state')
         setTimerResetKey(k => k + 1)
         setTextInput('')
         startQuestion(payload)
