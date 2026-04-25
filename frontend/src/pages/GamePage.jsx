@@ -166,11 +166,11 @@ export default function GamePage() {
                   <p className="text-white/60 font-medium mt-2 text-base">Waiting for headquarters...</p>
                 </div>
               ) : (
-                <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl">
-                  <div className="flex items-center gap-4">
+                <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-2xl">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                     <input
                       type="text"
-                      className="flex-1 px-6 py-5 rounded-[2rem] bg-blue-50 text-blue-900 font-black font-outfit text-xl outline-none focus:ring-4 focus:ring-blue-400/30 shadow-inner"
+                      className="flex-1 px-5 sm:px-6 py-4 sm:py-5 rounded-[1.5rem] sm:rounded-[2rem] bg-blue-50 text-blue-900 font-black font-outfit text-lg sm:text-xl outline-none focus:ring-4 focus:ring-blue-400/30 shadow-inner w-full"
                       placeholder="Type your answer..."
                       value={textInput}
                       onChange={(e) => setTextInput(e.target.value)}
@@ -180,7 +180,7 @@ export default function GamePage() {
                     <button
                       onClick={handleTextAnswer}
                       disabled={!textInput.trim()}
-                      className="px-8 py-5 bg-blue-600 text-white font-black font-outfit uppercase tracking-widest rounded-[2rem] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all"
+                      className="px-6 sm:px-8 py-4 sm:py-5 bg-blue-600 text-white font-black font-outfit uppercase tracking-widest rounded-[1.5rem] sm:rounded-[2rem] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all w-full sm:w-auto"
                     >
                       SUBMIT
                     </button>
