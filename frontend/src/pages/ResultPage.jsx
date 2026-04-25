@@ -11,7 +11,7 @@ export default function ResultPage() {
 
   const handlePlayAgain = () => {
     reset()
-    navigate('/')
+    navigate('/join')
   }
 
   return (
