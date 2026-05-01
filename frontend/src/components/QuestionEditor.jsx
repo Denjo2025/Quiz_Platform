@@ -169,24 +169,10 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
               <button
                 type="button"
                 onClick={() => { setIsTextAnswer(false); setAnswers([emptyAnswer(), emptyAnswer()]) }}
-                className={`flex-1 py-2 sm:py-4 px-3 sm:px-6 rounded-xl sm:rounded-[2rem] font-black font-outfit uppercase tracking-widest text-[10px] sm:text-sm transition-all ${
-                  !isTextAnswer 
-                    ? 'bg-blue-600 text-white shadow-lg' 
-                    : 'bg-blue-50 text-blue-900 hover:bg-blue-100'
-                }`}
+                className="flex-1 py-2 sm:py-4 px-3 sm:px-6 rounded-xl sm:rounded-[2rem] font-black font-outfit uppercase tracking-widest text-[10px] sm:text-sm transition-all bg-blue-600 text-white shadow-lg"
+                disabled
               >
                 Multiple Choice
-              </button>
-              <button
-                type="button"
-                onClick={() => { setIsTextAnswer(true); setAnswers((prev) => prev.map((a) => ({ ...a, is_correct: true }))) }}
-                className={`flex-1 py-2 sm:py-4 px-3 sm:px-6 rounded-xl sm:rounded-[2rem] font-black font-outfit uppercase tracking-widest text-[10px] sm:text-sm transition-all ${
-                  isTextAnswer 
-                    ? 'bg-blue-600 text-white shadow-lg' 
-                    : 'bg-blue-50 text-blue-900 hover:bg-blue-100'
-                }`}
-              >
-                Type Answer
               </button>
             </div>
           </div>
@@ -228,24 +214,7 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
       <div className="space-y-6">
         <label className="block text-blue-900/30 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Response Matrices</label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {isTextAnswer ? (
-            <div className="col-span-1 sm:col-span-2 p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] bg-emerald-50 border-2 border-emerald-200 shadow-lg">
-              <p className="text-blue-900/50 text-[10px] font-black uppercase tracking-widest mb-4">Correct Answer</p>
-              <div className="flex items-center gap-2 sm:gap-4 mb-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-2xl flex items-center justify-center bg-emerald-500 text-white shadow-md">
-                  <span className="text-xl">✓</span>
-                </div>
-                <input
-                  className="flex-1 min-w-0 px-3 sm:px-6 py-2 sm:py-4 rounded-xl sm:rounded-[2rem] bg-white border-2 border-transparent focus:border-emerald-500 text-blue-900 font-black font-outfit text-sm sm:text-lg outline-none transition-all"
-                  placeholder="Type the correct answer..."
-                  value={textAnswerInput}
-                  onChange={(e) => setTextAnswerInput(e.target.value)}
-                />
-              </div>
-              <p className="text-blue-900/30 text-[10px] font-black uppercase tracking-widest leading-relaxed">Players will type their answer - case insensitive matching</p>
-            </div>
-          ) : (
-            answers.map((ans, idx) => (
+          {answers.map((ans, idx) => (
               <div key={idx} className={`relative p-3 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border-2 transition-all flex flex-col gap-2 sm:gap-4 ${ans.is_correct ? 'bg-emerald-50 border-emerald-200 shadow-lg shadow-emerald-600/5' : 'bg-blue-50 border-transparent shadow-inner'}`}>
                 <div className="flex items-center gap-2 sm:gap-4">
                   <button
@@ -283,11 +252,10 @@ export default function QuestionEditor({ initial, onSave, onCancel }) {
                   </div>
                 )}
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
 
-        {!isTextAnswer && answers.length < 4 && (
+        {answers.length < 4 && (
           <button
             onClick={addAnswer}
             className="py-3 sm:py-6 rounded-2xl sm:rounded-[2.5rem] border-4 border-dashed border-blue-100 text-blue-900/20 hover:text-blue-600 hover:border-blue-600/20 hover:bg-blue-50 transition-all font-black font-outfit uppercase tracking-widest text-[9px] sm:text-[10px]"
